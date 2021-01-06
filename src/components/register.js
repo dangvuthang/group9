@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -40,6 +40,19 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const getAllCourses = async () => {
+  let courses;
+  try {
+    const response = await axios.get(
+      `${process.env.REACT_APP_ENDPOINT_DEVELOPMENT}/api/v1/courses`
+    );
+    courses = response.data;
+    return courses;
+  } catch (error) {
+    return null;
+  }
+};
+
 const Register = () => {
   const classes = useStyles();
   const auth = useContext(AuthContext);
@@ -49,13 +62,23 @@ const Register = () => {
     nationality: "",
     message: "",
     studentNumber: auth.authData ? auth.authData.userName.substring(1, 8) : "",
+    currentCourses: [],
   });
   const [inputError, setInputError] = useState({
     nationality: "",
     message: "",
+    currentCourses: "",
   });
+  const [courses, setCourses] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
+  useEffect(() => {
+    const getCoursesData = async () => {
+      const courses = await getAllCourses();
+      setCourses(courses);
+    };
+    getCoursesData();
+  }, []);
   const handleOnInputChange = event => {
     const { name, value } = event.target;
     setInput({ ...input, [name]: value });
@@ -77,25 +100,41 @@ const Register = () => {
       message: input.message,
     };
     setIsLoading(true);
-    let message;
+    let responseObj;
     try {
       const response = await axios.post(
-        `https://group-9.herokuapp.com/api/v1/users`,
+        `${process.env.REACT_APP_ENDPOINT_DEVELOPMENT}/api/v1/users`,
         data
       );
-      message = response.data.message;
+      responseObj = response.data;
     } catch (error) {
-      message = error.response.data;
-    } finally {
-      setIsLoading(false);
-      setTimeout(() => alert(message), 100);
+      responseObj = error.response.data;
     }
+    if (responseObj.status !== "success") {
+      setIsLoading(false);
+      return setTimeout(() => alert(responseObj.message), 100);
+    }
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_ENDPOINT_DEVELOPMENT}/api/v1/courses`,
+        { studentID: input.studentNumber, courseID: input.currentCourses }
+      );
+      responseObj = response.data;
+    } catch (error) {
+      responseObj = error.response.data;
+    }
+    if (responseObj.status !== "success") {
+      setIsLoading(false);
+      return setTimeout(() => alert(responseObj.message), 100);
+    }
+    setIsLoading(false);
+    setTimeout(() => alert("Successfully register your card"), 100);
   };
 
   if (!auth.authData) {
     history.push("/");
   }
-
+  console.log(courses);
   return (
     auth.authData && (
       <Container component="main" maxWidth="xs">
@@ -173,6 +212,31 @@ const Register = () => {
             />
             {inputError.message && (
               <FormHelperText error={true}>{inputError.message}</FormHelperText>
+            )}
+            <TextField
+              color="primary"
+              select
+              variant="outlined"
+              margin="normal"
+              fullWidth
+              label="Current courses"
+              name="currentCourses"
+              SelectProps={{
+                multiple: true,
+                value: input.currentCourses,
+                onChange: handleOnInputChange,
+              }}
+            >
+              {courses.map(course => (
+                <MenuItem key={course.courseID} value={course.courseID}>
+                  {course.name}
+                </MenuItem>
+              ))}
+            </TextField>
+            {inputError.currentCourses && (
+              <FormHelperText error={true}>
+                {inputError.currentCourses}
+              </FormHelperText>
             )}
             <Button
               type="submit"

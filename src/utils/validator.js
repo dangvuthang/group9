@@ -7,4 +7,7 @@ export default function checkInput(name, value) {
     if (value.length < 8)
       return "Message's length should be at least 8 characters";
   }
+  if (name === "currentCourses") {
+    if (value.length === 0) return "You must choose at least one course";
+  }
 }
