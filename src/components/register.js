@@ -93,6 +93,7 @@ const Register = () => {
 
   const handleSubmitForm = async e => {
     e.preventDefault();
+    let user;
     const data = {
       studentID: input.studentNumber,
       name: input.studentName,
@@ -107,6 +108,8 @@ const Register = () => {
         data
       );
       responseObj = response.data;
+      user = { ...data };
+      user.cardID = responseObj.cardId;
     } catch (error) {
       responseObj = error.response.data;
     }
@@ -127,8 +130,12 @@ const Register = () => {
       setIsLoading(false);
       return setTimeout(() => alert(responseObj.message), 100);
     }
+    auth.login({ user });
     setIsLoading(false);
-    setTimeout(() => alert("Successfully register your card"), 100);
+    setTimeout(() => {
+      alert("Successfully register your card");
+      history.push("/profile");
+    }, 100);
   };
 
   if (!auth.authData) {
@@ -138,7 +145,7 @@ const Register = () => {
   return (
     auth.authData && (
       <Container component="main" maxWidth="xs">
-        {isLoading && <LoadingSpinner isLoading={isLoading} />}
+        <LoadingSpinner isLoading={isLoading} />
         <CssBaseline />
         <div className={classes.paper}>
           <Avatar className={classes.avatar}>
@@ -193,7 +200,16 @@ const Register = () => {
                 onChange: handleOnInputChange,
               }}
             >
-              {["Vietnamese", "English"].map(nationality => (
+              {[
+                "Vietnamese",
+                "English",
+                "American",
+                "Indian",
+                "Australian",
+                "Korean",
+                "Japanese",
+                "Chinese",
+              ].map(nationality => (
                 <MenuItem value={nationality} key={nationality}>
                   {nationality}
                 </MenuItem>
