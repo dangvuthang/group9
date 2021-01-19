@@ -43,18 +43,19 @@ export default function SignUp() {
 
   const handleOnAuth = async (error, authData, msal) => {
     if (authData) {
-      console.log(authData);
       if (authData.account.userName.endsWith("@rmit.edu.vn")) {
+        setIsLoading(true);
         console.log(authData);
         const id = authData.account.userName.substring(1, 8);
         const user = await checkUser(id);
-        setIsLoading(true);
         if (!user) {
           auth.login({ authData: authData.account });
           setIsLoading(false);
           history.push("/register");
         } else {
+          auth.login({ user });
           setIsLoading(false);
+          history.push("/profile");
         }
       } else alert("Please use your rmit accoutn to login");
     }
@@ -62,7 +63,7 @@ export default function SignUp() {
 
   return (
     <Container component="main" maxWidth="xs">
-      {isLoading && <LoadingSpinner isLoading={isLoading} />}
+      <LoadingSpinner isLoading={isLoading} />
       <CssBaseline />
       <div className={classes.paper}>
         <Avatar className={classes.avatar}>
