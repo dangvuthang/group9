@@ -52,7 +52,7 @@ const UserProfile = ({ input, setInput }) => {
     setIsLoading(true);
     try {
       await axios.patch(
-        `${process.env.REACT_APP_ENDPOINT_DEVELOPMENT}/api/v1/users/${input.studentNumber}`,
+        `https://group-9.herokuapp.com/api/v1/users/${input.studentNumber}`,
         data
       );
       const updatedUserData = {

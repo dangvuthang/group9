@@ -44,7 +44,7 @@ const getAllCourses = async () => {
   let courses;
   try {
     const response = await axios.get(
-      `${process.env.REACT_APP_ENDPOINT_DEVELOPMENT}/api/v1/courses`
+      `https://group-9.herokuapp.com/api/v1/courses`
     );
     courses = response.data;
     return courses;
@@ -104,7 +104,7 @@ const Register = () => {
     let responseObj;
     try {
       const response = await axios.post(
-        `${process.env.REACT_APP_ENDPOINT_DEVELOPMENT}/api/v1/users`,
+        `https://group-9.herokuapp.com/api/v1/users`,
         data
       );
       responseObj = response.data;
@@ -119,7 +119,7 @@ const Register = () => {
     }
     try {
       const response = await axios.post(
-        `${process.env.REACT_APP_ENDPOINT_DEVELOPMENT}/api/v1/courses`,
+        `https://group-9.herokuapp.com/api/v1/courses`,
         { studentID: input.studentNumber, courseID: input.currentCourses }
       );
       responseObj = response.data;

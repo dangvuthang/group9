@@ -31,7 +31,7 @@ export default function SignUp() {
   const checkUser = async id => {
     try {
       const response = await axios.post(
-        `${process.env.REACT_APP_ENDPOINT_DEVELOPMENT}/api/v1/users/check`,
+        `https://group-9.herokuapp.com/api/v1/users/check`,
         { studentID: id }
       );
       console.log(response);

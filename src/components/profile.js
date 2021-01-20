@@ -99,7 +99,7 @@ const getStudentAttendance = async id => {
   let courses;
   try {
     const response = await axios.get(
-      `${process.env.REACT_APP_ENDPOINT_DEVELOPMENT}/api/v1/users/${id}/attendances`
+      `https://group-9.herokuapp.com/api/v1/users/${id}/attendances`
     );
     console.log(response);
     courses = response.data;
