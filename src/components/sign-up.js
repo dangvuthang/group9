@@ -74,10 +74,11 @@ export default function SignUp() {
         </Typography>
         <h3>Please use the provided rmit account to login</h3>
         <MicrosoftLogin
-          clientId="846fecbc-f462-4716-8d6f-1e7f0682b998"
+          clientId="8d2bbba8-9422-4696-a539-f0e73a2c8557"
           authCallback={(error, authData, msal) =>
             handleOnAuth(error, authData, msal)
           }
+          redirectUri="https://group9-frontend.herokuapp.com/"
           prompt="select_account"
           buttonTheme="light_short"
           label="Sign in"
